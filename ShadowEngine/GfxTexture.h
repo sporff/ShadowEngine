@@ -6,8 +6,12 @@ public:
 	~GfxTexture();
 
 	bool Load(std::string filename);
-	bool Create(int width, int height);
+	bool Create(uint64_t width, uint64_t height);
+
+	sf::RenderTexture* _getTexture();
+	sf::Sprite* _getSprite();
 private:
 	sf::RenderTexture _texture;
+	sf::Sprite _sprite;
 };
 
