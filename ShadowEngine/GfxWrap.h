@@ -6,6 +6,8 @@ using GfxKey = uint64_t;
 class GfxWrap
 {
 public:
+	static constexpr GfxKey InvalidKey = { 0 };
+
 	GfxWrap();
 	~GfxWrap();
 	//bool (*mainCallback)(GfxWrap&)
@@ -14,10 +16,12 @@ public:
 	void Clear();
 	void Clear(GfxColor clr);
 	bool Present();
-	void SetTarget(GfxTexture* newTarget);
+	bool SetTarget(GfxKey key);
 	void UnsetTarget();
-	bool LoadTexture(std::string filename);
-	bool CreateTexture(int width, int height);
+	bool Blit(GfxKey key, double x, double y, double width, double height);
+	bool BlitEx(GfxKey key, double x, double y, double width, double height, double ox, double oy, double degrees, double scale);
+	GfxKey LoadTexture(std::string filename);
+	GfxKey CreateTexture(int width, int height);
 
 	void Begin();
 
@@ -25,7 +29,11 @@ private:
 	//bool(*_mainCallback)(GfxWrap&) = nullptr;
 	std::function<bool(GfxWrap&)> _mainCallback;
 	sf::RenderWindow _window;
-	GfxTexture* _targetTexture = nullptr;
-	std::unordered_map<GfxKey, GfxTexture> _textures;
+	std::shared_ptr<GfxTexture> _targetTexture = nullptr;
+	GfxKey _nextTextureKey = { 1 };
+	std::unordered_map<GfxKey, std::shared_ptr<GfxTexture>> _textures;
+
+	GfxKey _getNextTextureKey();
+	std::shared_ptr<GfxTexture> _getTexture(GfxKey key);
 };
 
