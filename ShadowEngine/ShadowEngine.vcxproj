@@ -23,7 +23,7 @@
     <ProjectGuid>{48F863BC-1900-4B5B-A2A9-E0701561B67F}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>ShadowEngine</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
