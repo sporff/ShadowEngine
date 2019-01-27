@@ -17,6 +17,7 @@ bool GfxWrap::Init(std::string title, int windowWidth, int windowHeight, std::fu
 	}
 
 	_mainCallback = mainCallback;
+	_renderTarget = &_window;
 
 	return false;
 }
@@ -26,19 +27,12 @@ void GfxWrap::Shutdown() {
 }
 
 void GfxWrap::Clear() {
-	//_window.clear();
-
-
-	if (_targetTexture != nullptr) {
-		_targetTexture->_getTexture()->clear();
-	}
-	else {
-		_window.clear();
-	}
+	_renderTarget->clear();
+	
 }
 
 void GfxWrap::Clear( GfxColor clr ) {
-	_window.clear(clr);
+	_renderTarget->clear(clr);
 }
 
 bool GfxWrap::Present() {
@@ -48,8 +42,9 @@ bool GfxWrap::Present() {
 
 
 bool GfxWrap::SetTarget(GfxKey key) {
-	_targetTexture = _getTexture(key);
-	if (_targetTexture == nullptr) {
+	_renderTarget = _getTexture(key)->_getTexture();
+	if (_renderTarget == nullptr) {
+		_renderTarget = &_window;
 		return false;
 	}
 
@@ -58,7 +53,7 @@ bool GfxWrap::SetTarget(GfxKey key) {
 
 
 void GfxWrap::UnsetTarget() {
-	_targetTexture = nullptr;
+	_renderTarget = &_window;
 }
 
 
@@ -83,12 +78,7 @@ bool GfxWrap::Blit(GfxKey key, double x, double y, double width, double height) 
 	rs.setSize(sf::Vector2f( (float)width, (float)height));
 	//rs.setOrigin(width*0.5f, height*0.5f);
 
-	if (_targetTexture != nullptr) {
-		_targetTexture->_getTexture()->draw(rs);
-	}
-	else {
-		_window.draw(rs);
-	}
+	_renderTarget->draw(rs);
 
 	return true;
 }
@@ -116,23 +106,60 @@ bool GfxWrap::BlitEx(GfxKey key, double x, double y, double width, double height
 	rs.setRotation(degrees);
 	rs.setScale(scale, scale);
 
-	if (_targetTexture != nullptr) {
-		_targetTexture->_getTexture()->draw(rs);
-	}
-	else {
-		_window.draw(rs);
-	}
+	_renderTarget->draw(rs);
 
 	return true;
 }
 
+//void GfxWrap::DrawTriangle(double x1, double y1, double x2, double y2, double x3, double y3, GfxColor clr) {
+//	//sf::RenderTarget
+//	if (_targetTexture != nullptr) {
+//		_targetTexture->DrawTriangle(x1, y1, x2, y2, x3, y3, clr);
+//	}
+//	else {
+//		//sf::RenderTarget *w = &_window;
+//		//_window.draw(rs);
+//	}
+//}
+
+void GfxWrap::DrawLine(double x1, double y1, double x2, double y2, GfxColor clr) {
+	/*sf::Vertex line[] =
+	{
+		sf::Vertex(sf::Vector2f(x1, y1), clr),
+		sf::Vertex(sf::Vector2f(x2, y2), clr)
+	};
+	_texture.draw(line, 2, sf::Lines);*/
+
+	//if ()
+
+	sf::VertexArray line(sf::Lines, 2);
+	line[0].position = { (float)x1, (float)y1 };
+	line[1].position = { (float)x1, (float)y1 };
+
+	line[0].color = clr;
+	line[1].color = clr;
+
+	_renderTarget->draw(line);
+
+}
+
+
 void GfxWrap::DrawTriangle(double x1, double y1, double x2, double y2, double x3, double y3, GfxColor clr) {
-	if (_targetTexture != nullptr) {
-		_targetTexture->DrawTriangle(x1, y1, x2, y2, x3, y3, clr);
-	}
-	else {
-		//_window.draw(rs);
-	}
+	sf::VertexArray triangle(sf::Triangles, 3);
+
+	triangle[0].position = { (float)x1, (float)y1 };
+	triangle[1].position = { (float)x2, (float)y2 };
+	triangle[2].position = { (float)x3, (float)y3 };
+
+	triangle[0].color = clr;
+	triangle[1].color = clr;
+	triangle[2].color = clr;
+
+	_renderTarget->draw(triangle);
+}
+
+void GfxWrap::DrawQuad(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4, GfxColor clr) {
+
 }
 
 // Load a texture and store it in the map
