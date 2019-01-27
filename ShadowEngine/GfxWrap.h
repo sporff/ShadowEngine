@@ -1,7 +1,6 @@
 #pragma once
 
-using GfxColor = sf::Color;
-using GfxKey = uint64_t;
+
 
 class GfxWrap
 {
@@ -20,6 +19,7 @@ public:
 	void UnsetTarget();
 	bool Blit(GfxKey key, double x, double y, double width, double height);
 	bool BlitEx(GfxKey key, double x, double y, double width, double height, double ox, double oy, double degrees, double scale);
+	void DrawTriangle(double x1, double y1, double x2, double y2, double x3, double y3, GfxColor clr);
 	GfxKey LoadTexture(std::string filename);
 	GfxKey CreateTexture(int width, int height);
 

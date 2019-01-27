@@ -126,6 +126,15 @@ bool GfxWrap::BlitEx(GfxKey key, double x, double y, double width, double height
 	return true;
 }
 
+void GfxWrap::DrawTriangle(double x1, double y1, double x2, double y2, double x3, double y3, GfxColor clr) {
+	if (_targetTexture != nullptr) {
+		_targetTexture->DrawTriangle(x1, y1, x2, y2, x3, y3, clr);
+	}
+	else {
+		//_window.draw(rs);
+	}
+}
+
 // Load a texture and store it in the map
 GfxKey GfxWrap::LoadTexture(std::string filename) {
 	auto newTex = std::make_shared<GfxTexture>();
