@@ -9,8 +9,11 @@ GfxWrap::~GfxWrap() {
 }
 //bool(*mainCallback)(GfxWrap&)
 bool GfxWrap::Init(std::string title, int windowWidth, int windowHeight, std::function<bool(GfxWrap&)> mainCallback) {
+	sf::ContextSettings cs;
+	sf::Uint32 style = sf::Style::Titlebar | sf::Style::Close;
+
 	try {
-		_window.create(sf::VideoMode(windowWidth, windowHeight), title.c_str());
+		_window.create(sf::VideoMode(windowWidth, windowHeight), title.c_str(), style);
 	}
 	catch (std::exception e) {
 		std::cout << e.what();
@@ -24,6 +27,10 @@ bool GfxWrap::Init(std::string title, int windowWidth, int windowHeight, std::fu
 
 void GfxWrap::Shutdown() {
 	_window.close();
+}
+
+GfxVector2i GfxWrap::GetMousePos() {
+	return sf::Mouse::getPosition(_window);
 }
 
 void GfxWrap::Clear() {
@@ -57,7 +64,7 @@ void GfxWrap::UnsetTarget() {
 }
 
 
-bool GfxWrap::Blit(GfxKey key, double x, double y, double width, double height) {
+bool GfxWrap::Blit(GfxKey key, float x, float y, float width, float height) {
 	auto getTex = _getTexture(key);
 
 	if (getTex == nullptr) {
@@ -76,14 +83,14 @@ bool GfxWrap::Blit(GfxKey key, double x, double y, double width, double height) 
 	rs.setTexture(&rt->getTexture());
 	rs.setPosition(sf::Vector2f((float)x, (float)y));
 	rs.setSize(sf::Vector2f( (float)width, (float)height));
-	//rs.setOrigin(width*0.5f, height*0.5f);
+	rs.setOrigin(0.0f, 0.0f);
 
-	_renderTarget->draw(rs);
+	_renderTarget->draw(rs, sf::BlendAdd);
 
 	return true;
 }
 
-bool GfxWrap::BlitEx(GfxKey key, double x, double y, double width, double height, double ox, double oy, double degrees, double scale) {
+bool GfxWrap::BlitEx(GfxKey key, float x, float y, float width, float height, float ox, float oy, float degrees, float scale, GfxBlendMode blendMode=GfxBlendNone) {
 	auto getTex = _getTexture(key);
 
 	if (getTex == nullptr) {
@@ -106,31 +113,35 @@ bool GfxWrap::BlitEx(GfxKey key, double x, double y, double width, double height
 	rs.setRotation(degrees);
 	rs.setScale(scale, scale);
 
-	_renderTarget->draw(rs);
+	sf::BlendMode sfBlendMode;
+	switch (blendMode) {
+	case GfxBlendAdd:
+		sfBlendMode = sf::BlendAdd;
+		break;
+	case GfxBlendMod:
+		sfBlendMode = sf::BlendMultiply;
+		break;
+	case GfxBlendAlpha:
+		sfBlendMode = sf::BlendAlpha;
+		break;
+	case GfxBlendNone:
+	default:
+		sfBlendMode = sf::BlendNone;
+		break;
+	}
+	_renderTarget->draw(rs, sfBlendMode);
 
 	return true;
 }
 
-//void GfxWrap::DrawTriangle(double x1, double y1, double x2, double y2, double x3, double y3, GfxColor clr) {
-//	//sf::RenderTarget
-//	if (_targetTexture != nullptr) {
-//		_targetTexture->DrawTriangle(x1, y1, x2, y2, x3, y3, clr);
-//	}
-//	else {
-//		//sf::RenderTarget *w = &_window;
-//		//_window.draw(rs);
-//	}
-//}
 
-void GfxWrap::DrawLine(double x1, double y1, double x2, double y2, GfxColor clr) {
+void GfxWrap::DrawLine(float x1, float y1, float x2, float y2, GfxColor clr) {
 	/*sf::Vertex line[] =
 	{
 		sf::Vertex(sf::Vector2f(x1, y1), clr),
 		sf::Vertex(sf::Vector2f(x2, y2), clr)
 	};
 	_texture.draw(line, 2, sf::Lines);*/
-
-	//if ()
 
 	sf::VertexArray line(sf::Lines, 2);
 	line[0].position = { (float)x1, (float)y1 };
@@ -144,7 +155,7 @@ void GfxWrap::DrawLine(double x1, double y1, double x2, double y2, GfxColor clr)
 }
 
 
-void GfxWrap::DrawTriangle(double x1, double y1, double x2, double y2, double x3, double y3, GfxColor clr) {
+void GfxWrap::DrawTriangle(float x1, float y1, float x2, float y2, float x3, float y3, GfxColor clr) {
 	sf::VertexArray triangle(sf::Triangles, 3);
 
 	triangle[0].position = { (float)x1, (float)y1 };
@@ -158,7 +169,7 @@ void GfxWrap::DrawTriangle(double x1, double y1, double x2, double y2, double x3
 	_renderTarget->draw(triangle);
 }
 
-void GfxWrap::DrawQuad(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4, GfxColor clr) {
+void GfxWrap::DrawQuad(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4, GfxColor clr) {
 
 }
 

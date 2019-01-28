@@ -18,27 +18,29 @@ public:
 	void Clear();
 	void Clear(GfxColor clr);
 	bool Present();
+	void Begin();
+
 	bool SetTarget(GfxKey key);
 	void UnsetTarget();
-	bool Blit(GfxKey key, double x, double y, double width, double height);
-	bool BlitEx(GfxKey key, double x, double y, double width, double height, double ox, double oy, double degrees, double scale);
+	bool Blit(GfxKey key, float x, float y, float width, float height);
+	bool BlitEx(GfxKey key, float x, float y, float width, float height, float ox, float oy, float degrees, float scale, GfxBlendMode blendMode);
 
-	void DrawLine(double x1, double y1, double x2, double y2, GfxColor clr);
-	void DrawTriangle(double x1, double y1, double x2, double y2, double x3, double y3, GfxColor clr);
-	void DrawQuad(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4, GfxColor clr);
-	
+	void DrawLine(float x1, float y1, float x2, float y2, GfxColor clr);
+	void DrawTriangle(float x1, float y1, float x2, float y2, float x3, float y3, GfxColor clr);
+	void DrawQuad(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4, GfxColor clr);
 
-	void Begin();
+	GfxVector2i GetMousePos();
 
 private:
 	//bool(*_mainCallback)(GfxWrap&) = nullptr;
 	std::function<bool(GfxWrap&)> _mainCallback;
 	sf::RenderWindow _window;
-	sf::RenderTarget* _renderTarget = nullptr;
-	GfxKey _nextTextureKey = { 1 };
-	std::unordered_map<GfxKey, std::shared_ptr<GfxTexture>> _textures;
+	sf::RenderTarget* _renderTarget = nullptr;		// Either _window or a RenderTexture
 
+	GfxKey _nextTextureKey = { 1 };
 	GfxKey _getNextTextureKey();
+	
+	std::unordered_map<GfxKey, std::shared_ptr<GfxTexture>> _textures;
 	std::shared_ptr<GfxTexture> _getTexture(GfxKey key);
 };
 
