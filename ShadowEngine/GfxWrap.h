@@ -17,7 +17,7 @@ public:
 
 	void Clear();
 	void Clear(GfxColor clr);
-	bool Present();
+	void Present();
 	void Begin();
 
 	bool SetTarget(GfxKey key);
@@ -35,6 +35,7 @@ private:
 	//bool(*_mainCallback)(GfxWrap&) = nullptr;
 	std::function<bool(GfxWrap&)> _mainCallback;
 	sf::RenderWindow _window;
+	bool _targetIsWindow = false;
 	sf::RenderTarget* _renderTarget = nullptr;		// Either _window or a RenderTexture
 
 	GfxKey _nextTextureKey = { 1 };

@@ -20,7 +20,7 @@ bool GfxWrap::Init(std::string title, int windowWidth, int windowHeight, std::fu
 	}
 
 	_mainCallback = mainCallback;
-	_renderTarget = &_window;
+	UnsetTarget();
 
 	return false;
 }
@@ -42,24 +42,30 @@ void GfxWrap::Clear( GfxColor clr ) {
 	_renderTarget->clear(clr);
 }
 
-bool GfxWrap::Present() {
-	_window.display();
-	return true;
+void GfxWrap::Present() {
+	if (_targetIsWindow == true)
+		_window.display();
+	else if (_renderTarget != nullptr)
+		static_cast<sf::RenderTexture*>(_renderTarget)->display();
 }
 
 
 bool GfxWrap::SetTarget(GfxKey key) {
-	_renderTarget = _getTexture(key)->_getTexture();
-	if (_renderTarget == nullptr) {
+	auto gotTexture = _getTexture(key);
+
+	if (gotTexture == nullptr) {
 		_renderTarget = &_window;
 		return false;
 	}
 
+	_renderTarget = gotTexture->_getTexture();
+	_targetIsWindow = false;
 	return true;
 }
 
 
 void GfxWrap::UnsetTarget() {
+	_targetIsWindow = true;
 	_renderTarget = &_window;
 }
 
@@ -79,13 +85,12 @@ bool GfxWrap::Blit(GfxKey key, float x, float y, float width, float height) {
 		return false;
 	}
 
-	//rs.setFillColor(sf::Color(150, 50, 50));
 	rs.setTexture(&rt->getTexture());
 	rs.setPosition(sf::Vector2f((float)x, (float)y));
 	rs.setSize(sf::Vector2f( (float)width, (float)height));
 	rs.setOrigin(0.0f, 0.0f);
 
-	_renderTarget->draw(rs, sf::BlendAdd);
+	_renderTarget->draw(rs, sf::BlendNone);
 
 	return true;
 }

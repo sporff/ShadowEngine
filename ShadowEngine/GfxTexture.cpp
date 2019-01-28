@@ -44,3 +44,10 @@ bool GfxTexture::Create(int width, int height) {
 	return true;
 }
 
+bool GfxTexture::LoadFromMemory(int width, int height, GfxColorComponent* memory) {
+	/*sf::Image newImage;
+
+	newImage.create(width, height, memory);*/
+
+	return true;
+}

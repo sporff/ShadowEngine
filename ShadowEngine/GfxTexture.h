@@ -7,6 +7,7 @@ public:
 
 	bool Load(std::string filename);
 	bool Create(int width, int height);
+	bool LoadFromMemory(int width, int height, GfxColorComponent* memory);
 
 
 
