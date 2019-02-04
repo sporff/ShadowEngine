@@ -141,21 +141,21 @@ bool GfxWrap::BlitEx(GfxKey key, float x, float y, float width, float height, fl
 
 
 void GfxWrap::DrawLine(float x1, float y1, float x2, float y2, GfxColor clr) {
-	/*sf::Vertex line[] =
+	sf::Vertex line[] =
 	{
 		sf::Vertex(sf::Vector2f(x1, y1), clr),
 		sf::Vertex(sf::Vector2f(x2, y2), clr)
 	};
-	_texture.draw(line, 2, sf::Lines);*/
+	_renderTarget->draw(line, 2, sf::Lines);
 
-	sf::VertexArray line(sf::Lines, 2);
-	line[0].position = { (float)x1, (float)y1 };
-	line[1].position = { (float)x1, (float)y1 };
+	//sf::VertexArray line(sf::Lines, 2);
+	//line[0].position = { (float)x1, (float)y1 };
+	//line[1].position = { (float)x1, (float)y1 };
 
-	line[0].color = clr;
-	line[1].color = clr;
+	//line[0].color = clr;
+	//line[1].color = clr;
 
-	_renderTarget->draw(line);
+	//_renderTarget->draw(line);
 
 }
 
