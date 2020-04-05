@@ -139,6 +139,56 @@ bool GfxWrap::BlitEx(GfxKey key, float x, float y, float width, float height, fl
 	return true;
 }
 
+bool GfxWrap::BlitEx(GfxKey key, float x, float y, float width, float height, float ox, float oy, float degrees, float scale, float texScale, GfxBlendMode blendMode)
+{
+	auto getTex = _getTexture(key);
+
+	if (getTex == nullptr) {
+		Logger::dprint({ "Error finding texture: ", std::to_string(key) });
+		return false;
+	}
+
+	sf::RectangleShape rs;
+	sf::RenderTexture *rt = getTex->_getTexture();
+	if (rt == nullptr) {
+		Logger::dprint({ "Error finding texture: ", std::to_string(key) });
+		return false;
+	}
+
+	//rs.setFillColor(sf::Color(150, 50, 50));
+	rt->setRepeated(true);
+	rs.setTexture(&rt->getTexture());
+	auto texSize = rs.getSize();
+	//sf::IntRect texRect(0, 0, (int)(texScale * (float)texSize.x), (int)(texScale*(float)texSize.y));
+	sf::IntRect texRect(0, 0, 2048.f, 2048.f);
+	rs.setTextureRect(texRect);
+	rs.setPosition(sf::Vector2f((float)x, (float)y));
+	rs.setSize(sf::Vector2f((float)width, (float)height));
+	rs.setOrigin(ox, oy);
+	rs.setRotation(degrees);
+	rs.setScale(scale, scale);
+
+	sf::BlendMode sfBlendMode;
+	switch (blendMode) {
+	case GfxBlendAdd:
+		sfBlendMode = sf::BlendAdd;
+		break;
+	case GfxBlendMod:
+		sfBlendMode = sf::BlendMultiply;
+		break;
+	case GfxBlendAlpha:
+		sfBlendMode = sf::BlendAlpha;
+		break;
+	case GfxBlendNone:
+	default:
+		sfBlendMode = sf::BlendNone;
+		break;
+	}
+	_renderTarget->draw(rs, sfBlendMode);
+
+	return true;
+}
+
 
 void GfxWrap::DrawLine(float x1, float y1, float x2, float y2, GfxColor clr) {
 	sf::Vertex line[] =
@@ -175,7 +225,19 @@ void GfxWrap::DrawTriangle(float x1, float y1, float x2, float y2, float x3, flo
 }
 
 void GfxWrap::DrawQuad(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4, GfxColor clr) {
+	sf::VertexArray quad(sf::Quads, 4);
 
+	quad[0].position = { (float)x1, (float)y1 };
+	quad[1].position = { (float)x2, (float)y2 };
+	quad[2].position = { (float)x3, (float)y3 };
+	quad[3].position = { (float)x4, (float)y4 };
+
+	quad[0].color = clr;
+	quad[1].color = clr;
+	quad[2].color = clr;
+	quad[3].color = clr;
+
+	_renderTarget->draw(quad);
 }
 
 // Load a texture and store it in the map

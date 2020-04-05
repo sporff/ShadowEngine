@@ -24,6 +24,7 @@ public:
 	void UnsetTarget();
 	bool Blit(GfxKey key, float x, float y, float width, float height);
 	bool BlitEx(GfxKey key, float x, float y, float width, float height, float ox, float oy, float degrees, float scale, GfxBlendMode blendMode);
+	bool BlitEx(GfxKey key, float x, float y, float width, float height, float ox, float oy, float degrees, float scale, float texScale, GfxBlendMode blendMode);
 
 	void DrawLine(float x1, float y1, float x2, float y2, GfxColor clr);
 	void DrawTriangle(float x1, float y1, float x2, float y2, float x3, float y3, GfxColor clr);
